@@ -93,12 +93,21 @@
                     </div>
 
                     <!-- Target 2 -->
-                    <div class="flex justify-between items-center">
+                    <div class="flex justify-between items-center mb-3">
                         <div>
                             <div class="font-bold text-slate-800" data-i18n="extendedExit">Extended Exit (Zero Time)</div>
                             <div class="text-xs text-slate-500 ltr:font-mono" data-i18n="extendedFormula">Arrival + 8h 54m + 61m + 30m</div>
                         </div>
                         <div class="text-xl font-mono font-bold text-purple-600 bg-purple-50 px-2 py-1 rounded" id="exitExtended">--:--</div>
+                    </div>
+
+                    <!-- Target 3 (Max Overtime) -->
+                    <div class="flex justify-between items-center">
+                        <div>
+                            <div class="font-bold text-slate-800" data-i18n="maxOvertimeExit">Max Overtime Exit</div>
+                            <div class="text-xs text-slate-500 ltr:font-mono" data-i18n="maxOvertimeFormula">Arrival + 8h 54m + 30m + 3.5h</div>
+                        </div>
+                        <div class="text-xl font-mono font-bold text-red-600 bg-red-50 px-2 py-1 rounded" id="exitMaxOvertime">--:--</div>
                     </div>
                 </div>
             </div>
@@ -190,6 +199,8 @@
                 regularFormula: "Arrival + 8h 54m",
                 extendedExit: "Extended Exit (Zero Time)",
                 extendedFormula: "Arrival + 8h 54m + 61m + 30m",
+                maxOvertimeExit: "Max Overtime Exit",
+                maxOvertimeFormula: "Arrival + 8h 54m + 30m + 3.5h",
                 statusTitle: "Entitlements & Status",
                 waitingData: "Waiting for data...",
                 manualExitLabel: "Manual Exit Time (Optional)",
@@ -231,6 +242,8 @@
                 regularFormula: "הגעה + 8:54",
                 extendedExit: "יציאה מאוחרת (שעת אפס)",
                 extendedFormula: "הגעה + 8:54 + 61ד + 30ד",
+                maxOvertimeExit: "מקסימום שעות נוספות",
+                maxOvertimeFormula: "הגעה + 8:54 + 30ד + 3.5ש",
                 statusTitle: "סטטוס וזכאויות",
                 waitingData: "ממתין לנתונים...",
                 manualExitLabel: "שעת יציאה ידנית (אופציונלי)",
@@ -363,7 +376,6 @@
                 manualDate.setHours(h, m, 0, 0);
                 
                 // If manual time is "smaller" than arrival, assume next day (night shift logic)
-                // Just a basic check, can be improved with real dates
                 if (manualDate < arrivalDate) {
                      manualDate.setDate(manualDate.getDate() + 1);
                 }
@@ -396,11 +408,16 @@
             
             // 3. Overtime: Starts after 8h 54m + 30m = 9h 24m
             const standardEnd = new Date(arrivalDate.getTime() + (9 * 60 + 24) * 60 * 1000);
+
+            // 4. Max Overtime Exit: Standard End + 3.5h
+            const maxOtExit = new Date(standardEnd.getTime() + (3.5 * 60 * 60 * 1000));
+
             const overtimeMs = now - standardEnd;
             const overtimeHours = overtimeMs > 0 ? overtimeMs / (1000 * 60 * 60) : 0;
             
             document.getElementById('exitRegular').innerText = formatTime(regularExit);
             document.getElementById('exitExtended').innerText = formatTime(extendedExit);
+            document.getElementById('exitMaxOvertime').innerText = formatTime(maxOtExit);
 
             // Overtime Bar
             const otCap = 3.5;
