@@ -68,12 +68,26 @@
                 <div class="text-xs text-slate-400 mt-1" data-i18n="sinceArrival">Since arrival</div>
                 
                 <div class="mt-4 pt-4 border-t border-slate-100">
-                    <div class="flex justify-between items-center mb-1">
-                        <span class="text-sm text-slate-600" data-i18n="otProgress">Overtime Progress (Max 3.5h)</span>
-                        <span class="text-xs font-bold text-blue-600 ltr:font-mono" id="otPercent">0%</span>
+                    <!-- Extended Progress -->
+                    <div class="mb-4">
+                        <div class="flex justify-between items-center mb-1">
+                            <span class="text-sm text-slate-600" data-i18n="extendedProgress">Extended Goal Progress</span>
+                            <span class="text-xs font-bold text-purple-600 ltr:font-mono" id="extendedPercent">0%</span>
+                        </div>
+                        <div class="w-full bg-slate-200 rounded-full h-2.5">
+                            <div id="extendedBar" class="bg-purple-600 h-2.5 rounded-full rtl:rounded-r-full rtl:rounded-l-none" style="width: 0%"></div>
+                        </div>
                     </div>
-                    <div class="w-full bg-slate-200 rounded-full h-2.5">
-                        <div id="otBar" class="bg-blue-600 h-2.5 rounded-full rtl:rounded-r-full rtl:rounded-l-none" style="width: 0%"></div>
+
+                    <!-- Overtime Progress -->
+                    <div>
+                        <div class="flex justify-between items-center mb-1">
+                            <span class="text-sm text-slate-600" data-i18n="otProgress">Overtime Progress (Max 3.5h)</span>
+                            <span class="text-xs font-bold text-blue-600 ltr:font-mono" id="otPercent">0%</span>
+                        </div>
+                        <div class="w-full bg-slate-200 rounded-full h-2.5">
+                            <div id="otBar" class="bg-blue-600 h-2.5 rounded-full rtl:rounded-r-full rtl:rounded-l-none" style="width: 0%"></div>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -193,6 +207,7 @@
                 currentDurationTitle: "Current Duration",
                 btnRecalculate: "Recalculate",
                 sinceArrival: "Since arrival",
+                extendedProgress: "Extended Goal Progress",
                 otProgress: "Overtime Progress (Max 3.5h)",
                 exitTargetsTitle: "Exit Targets",
                 regularExit: "Regular Exit",
@@ -236,6 +251,7 @@
                 currentDurationTitle: "זמן עבודה נוכחי",
                 btnRecalculate: "רענן נתונים",
                 sinceArrival: "מאז ההגעה",
+                extendedProgress: "התקדמות ליעד מורחב",
                 otProgress: "התקדמות שעות נוספות (מקס' 3.5)",
                 exitTargetsTitle: "יעדי יציאה",
                 regularExit: "יציאה רגילה",
@@ -418,6 +434,12 @@
             document.getElementById('exitRegular').innerText = formatTime(regularExit);
             document.getElementById('exitExtended').innerText = formatTime(extendedExit);
             document.getElementById('exitMaxOvertime').innerText = formatTime(maxOtExit);
+
+            // Extended Progress Bar (Base: 10h 25m = 625 mins)
+            const totalExtendedDurationMs = (10 * 60 + 25) * 60 * 1000;
+            const extendedPct = Math.min((diffMs / totalExtendedDurationMs) * 100, 100);
+            document.getElementById('extendedBar').style.width = `${Math.max(0, extendedPct)}%`;
+            document.getElementById('extendedPercent').innerText = `${extendedPct.toFixed(0)}%`;
 
             // Overtime Bar
             const otCap = 3.5;
