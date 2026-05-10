@@ -68,6 +68,18 @@
                 <div class="text-xs text-slate-400 mt-1" data-i18n="sinceArrival">Since arrival</div>
                 
                 <div class="mt-4 pt-4 border-t border-slate-100">
+                    
+                    <!-- Regular Progress -->
+                    <div class="mb-4">
+                        <div class="flex justify-between items-center mb-1">
+                            <span class="text-sm text-slate-600" data-i18n="regularProgress">Regular Day Progress (8h 54m)</span>
+                            <span class="text-xs font-bold text-green-600 ltr:font-mono" id="regularPercent">0%</span>
+                        </div>
+                        <div class="w-full bg-slate-200 rounded-full h-2.5">
+                            <div id="regularBar" class="bg-green-600 h-2.5 rounded-full rtl:rounded-r-full rtl:rounded-l-none" style="width: 0%"></div>
+                        </div>
+                    </div>
+
                     <!-- Extended Progress -->
                     <div class="mb-4">
                         <div class="flex justify-between items-center mb-1">
@@ -207,6 +219,7 @@
                 currentDurationTitle: "Current Duration",
                 btnRecalculate: "Recalculate",
                 sinceArrival: "Since arrival",
+                regularProgress: "Regular Day Progress (8h 54m)",
                 extendedProgress: "Extended Goal Progress",
                 otProgress: "Overtime Progress (Max 3.5h)",
                 exitTargetsTitle: "Exit Targets",
@@ -251,6 +264,7 @@
                 currentDurationTitle: "זמן עבודה נוכחי",
                 btnRecalculate: "רענן נתונים",
                 sinceArrival: "מאז ההגעה",
+                regularProgress: "התקדמות יום עבודה רגיל (8:54)",
                 extendedProgress: "התקדמות ליעד מורחב",
                 otProgress: "התקדמות שעות נוספות (מקס' 3.5)",
                 exitTargetsTitle: "יעדי יציאה",
@@ -434,6 +448,12 @@
             document.getElementById('exitRegular').innerText = formatTime(regularExit);
             document.getElementById('exitExtended').innerText = formatTime(extendedExit);
             document.getElementById('exitMaxOvertime').innerText = formatTime(maxOtExit);
+
+            // Regular Progress Bar (Base: 8h 54m = 534 mins)
+            const totalRegularDurationMs = (8 * 60 + 54) * 60 * 1000;
+            const regularPct = Math.min((diffMs / totalRegularDurationMs) * 100, 100);
+            document.getElementById('regularBar').style.width = `${Math.max(0, regularPct)}%`;
+            document.getElementById('regularPercent').innerText = `${regularPct.toFixed(0)}%`;
 
             // Extended Progress Bar (Base: 10h 25m = 625 mins)
             const totalExtendedDurationMs = (10 * 60 + 25) * 60 * 1000;
